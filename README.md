@@ -1,259 +1,84 @@
-# Olimpo — Fake News AI 🏛️
+# Olimpo — Fake News AI
 
-> **Plataforma Gamificada de Combate à Desinformação e Fact-Checking em Tempo Real**  
-> _Parceria Institucional: Pontifícia Universidade Católica de Campinas (PUCC) & Instituto de Pesquisas Eldorado_
+Plataforma gamificada de letramento midiático: jogadores classificam notícias sob pressão de tempo, e um classificador de machine learning (SVM com atributos linguísticos do spaCy) estima a classe e o score de falsidade de cada texto.
 
-[![Next.js 16](https://img.shields.io/badge/Next.js-16.3.8-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![React 19](https://img.shields.io/badge/React-19.2-blue?style=flat&logo=react)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Tailwind CSS v4](https://img.shields.io/badge/Tailwind_CSS-v4.3-38bdf8?style=flat&logo=tailwindcss)](https://tailwindcss.com/)
-[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-0.45.3-C5F74F?style=flat)](https://orm.drizzle.team/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-3.4-336791?style=flat&logo=postgresql)](https://www.postgresql.org/)
-[![Redis](https://img.shields.io/badge/Redis-6.0-DC382D?style=flat&logo=redis)](https://redis.io/)
-[![Vitest](https://img.shields.io/badge/Vitest-4.1-yellow?style=flat&logo=vitest)](https://vitest.dev/)
-[![Playwright](https://img.shields.io/badge/Playwright-1.63-green?style=flat&logo=playwright)](https://playwright.dev/)
-[![OpenSpec](https://img.shields.io/badge/OpenSpec-Enabled-purple?style=flat)](docs/openspec/)
-[![Architecture Doc](https://img.shields.io/badge/Architecture_Doc-PDF_Available-red?style=flat&logo=adobeacrobatreader)](docs/codigo/arquitetura.pdf)
+<!-- DEMO -->
 
----
+## O problema
 
-O modelo supervisionado já está conectado ao web app pelo motor em
-`model-engine/`. A leitura mantém as observações descritivas do não supervisionado;
-após o encerramento coletivo, “Análise do modelo” mostra a classe estimada, o score
-de falsidade e contribuições do texto. O gabarito cadastrado continua separado e
-define a pontuação. A previsão não confirma acontecimentos ou fontes.
-Consulte o [plano de integração](model-engine/docs/plano-integracao-supervisionado.md),
-o [motor](model-engine/README.md) e a
-[validação da integração](docs/machine-learning/validacao-integracao-supervisionado.md).
+Decidir se uma manchete é confiável leva poucos segundos, e palestras e cartilhas têm pouco efeito sobre esse hábito. O Olimpo transforma a checagem em um jogo multiplayer cronometrado, em que a pessoa escolhe entre "fake", "real" e "preciso checar", e depois vê o gabarito, a votação da sala e a análise do modelo.
 
-## 🚨 O Problema: A "Dor" da Infodemia e Desinformação
-
-No ecossistema digital contemporâneo, a sociedade enfrenta uma crise aguda de letramento informacional e confiança pública:
-
-- ⚡ **Velocidade Epidêmica de Propagação**: Notícias falsas espalham-se em média **6 vezes mais rápido** do que notícias verdadeiras nas redes sociais, impulsionadas por algoritmos de recomendação que monetizam o engajamento emocional, o sensacionalismo e a indignação.
-- 📉 **Ineficácia dos Métodos Tradicionais**: Palestras expositivas, cartilhas institucionais e checagens estáticas têm baixo engajamento e retenção quase nula entre jovens e estudantes. A conscientização puramente passiva não gera mudança real de comportamento.
-- 🎭 **Hiper-Realismo com IA Generativa**: Boatos modernos e matérias forjadas possuem formatação visual, tipografia e vocabulário indistinguíveis de grandes portais jornalísticos, tornando a identificação visual extremamente desafiadora para o leitor comum.
-- ⏳ **Decisão Impulsiva Sob Pressão**: O usuário médio decide se compartilha, valida ou reage a uma manchete em menos de **5 segundos**, sem realizar checagem cruzada ou investigar a procedência da fonte.
-
-> 💡 **A Solução do Olimpo**: Transformar o letramento midiático em um **treinamento ativo, gamificado e competitivo sob pressão de tempo**. Ao colocar os jogadores diante de dilemas reais de fact-checking e permitir que experimentem a própria mecânica da persuasão e do blefe, o Olimpo desenvolve imunidade cognitiva, pensamento crítico e o hábito do questionamento investigativo.
-
----
-
-## 📌 1. Visão Geral do Projeto
-
-O **Olimpo** é uma plataforma educacional, interativa e colaborativa inspirada nas dinâmicas competitivas de quiz multiplayer (estilo _Kahoot_), concebida para conscientizar, engajar e treinar estudantes, cidadãos e equipes corporativas na identificação de notícias falsas (_fake news_) e no reconhecimento de jornalismo verídico.
-
-Em salas multiplayer dinâmicas ou partidas individuais, os participantes enfrentam rodadas cronometradas com notícias e manchetes reais, decidindo sob pressão entre:
-
-- ✖ **Fato Inconfiável / Fake News** (Desinformação / Boato)
-- ✔ **Fato Real e Confiável** (Notícia Verídica / Jornalismo Investigativo)
-- ❓ **Dúvida Crítica** (Necessidade de checagem mais aprofundada)
-
-### 🎮 Mecânicas Inovadoras de Jogo
-
-- **Desafios Autorais e Mecânica de Blefe**: Os próprios participantes podem submeter matérias da web. Caso um jogador submeta uma notícia falsa verossímil e outros participantes votem como fato verídico, o autor acumula pontos bônus de blefe por cada participante induzido ao erro.
-- **Feedback Educativo com IA**: A cada rodada, o gabarito real é revelado com análise analítica explicativa (critérios de fact-checking jornalístico) e gráfico em tempo real com a distribuição dos votos da sala.
-- **Placar Dinâmico e Ranking**: Pontuação calculada com precisão no Redis, bonificando rapidez de resposta, acertos consecutivos e blefes bem-sucedidos.
-
----
-
-## 🏛️ 2. Fundamentos de Arquitetura e Engenharia de Software
-
-O ecossistema Olimpo foi desenvolvido sobre uma arquitetura moderna, escalável e tipada de ponta a ponta. A documentação completa e formal está organizada em [`docs/codigo/`](docs/codigo/README.md), com fonte LaTeX e versão PDF.
-
-### 📐 Resumo dos Pilares Técnicos
+## Como funciona
 
 ```mermaid
 flowchart LR
-  subgraph Frontend["Frontend: MVVM and FSD in gameplay flows"]
-    Route["src/app: routes and handlers"] --> View["src/views: page composition"]
-    View --> VM["views/*/model: ViewModels"]
-    View --> Feature["src/features: public APIs"]
-    View --> Widget["src/widgets: shared game stages"]
-    VM --> Action["Validated Server Actions"]
-  end
-
-  subgraph Backend["Backend: partial DDD by context"]
-    Action --> Root["Context composition root"]
-    Root --> UseCase["Application use case"]
-    UseCase --> Port["Repository port"]
-    Root -. wires .-> Adapter["Drizzle / Redis adapter"]
-    Adapter -. implements .-> Port
-    Adapter --> DB[("PostgreSQL / Redis")]
-  end
-
-  EventRoute["SSE Route Handler"] --> View
+    J([Jogadores]) --> WEB["web-app<br/>Next.js · salas multiplayer<br/>votação em tempo real (SSE)"]
+    WEB --> DB[("PostgreSQL · Redis<br/>placar e eventos")]
+    WEB -->|texto da notícia<br/>ao fim da rodada| ME["model-engine<br/>serviço HTTP interno (Python)"]
+    ME --> SUP["🧠 Modelo supervisionado<br/>atributos spaCy · chi² · SVD<br/>SVM calibrado<br/>classe + score de falsidade"]
+    ME --> UNS["🧠 Modelo não supervisionado<br/>FP-Growth · comparação descritiva"]
+    SUP -->|"Análise do modelo"| WEB
+    UNS -->|observações descritivas| WEB
+    ML["machine-learning/<br/>notebooks e experimentos<br/>(pesquisa offline)"] -.->|artefatos exportados| ME
 ```
 
-### 🔑 14 Decisões Arquiteturais Centrais
+A pontuação do jogo vem do **gabarito cadastrado** da notícia, e não do modelo. A "Análise do modelo" aparece depois do encerramento coletivo da rodada, mostra a classe estimada, o score de falsidade e as contribuições do texto, e **não confirma acontecimentos nem fontes**.
 
-1. **OpenSpec (Spec-Driven Development)**: Governança técnica viva com capacidades declaradas em [`docs/openspec/specs/`](docs/openspec/specs/) (`auth`, `rooms`, `news-voting`, `realtime-events`, `ai-feedback`, `gamification`) e controle de mudanças em [`docs/openspec/changes/`](docs/openspec/changes/), assegurando alinhamento absoluto entre desenvolvedores e agentes de IA.
-2. **DDD parcial por contexto**: Nos contextos de jogo alterados (`rooms`, `news-voting` e `global-challenges`), entidades não dependem de schemas Drizzle, ports usam DTOs/read models e composition roots conectam use cases a adapters. Os demais contextos não são declarados migrados.
-3. **Persistência Híbrida (PostgreSQL + Redis)**:
-   - **PostgreSQL com Drizzle ORM**: Dados relacionais permanentes, integridade referencial e coluna `article` em formato **JSONB** para metadados flexíveis de notícias.
-   - **Redis (`ioredis`)**: Armazenamento em memória de altíssimo desempenho para busca de PINs de sala em $O(1)$, placar ao vivo com Sorted Sets (`ZADD`/`ZREVRANGE`) e mensageria Pub/Sub.
-4. **Next.js 16 Full-Stack**: Eliminação de duplicação de contratos através de Server Actions nativas (`"use server"`), Server Components (RSC) e isolamento rigoroso de infraestrutura com `server-only`.
-5. **Server-Sent Events (SSE) para Tempo Real**: Comunicação em tempo real unidirecional nativa via HTTP/2 (`text/event-stream`) conectada ao Pub/Sub do Redis em `GET /api/rooms/[pin]/events`, evitando a complexidade operacional, limites de conexão e custos de WebSockets com estado em infraestruturas elásticas.
-6. **Pronto para Serverless**: Operação stateless em lambdas efêmeras, com pool de conexões reutilizadas em `globalThis` para neutralizar vazamentos de conexões (_connection leaks_).
-7. **Respostas Padronizadas de API**: Contratos de rede baseados em Uniões Discriminadas em TypeScript (`{ success: true, data } | { success: false, error }`), eliminando retornos imprevisíveis.
-8. **Autenticação Segura e Gestão de Sessão**:
-   - Hash irreversível de senhas com `bcryptjs` (custo de 10 rounds de salt).
-   - Sessões stateless com **JSON Web Tokens (JWT)** assinados via biblioteca `jose` (validade de 7 dias).
-   - Transporte blindado através de cookies gerenciados exclusivamente no servidor com flags **`httpOnly`**, **`Secure`** e **`SameSite=lax`**, prevenindo ataques XSS e CSRF.
-9. **Injeção de Dependência (DI)**: Nos contextos de jogo refatorados, casos de uso recebem ports obrigatórios e composition roots conectam adapters. Outros módulos ainda podem usar defaults de produção até sua própria migração.
-10. **Arquitetura em Camadas**: Nos contextos deste recorte, actions validadas chamam use cases, use cases dependem de ports e adapters implementam esses ports. Tipos de domínio permanecem sem dependência de Next.js, React ou Drizzle.
-11. **Validação Rigorosa de Dados**:
-    - Schemas tipados de borda com **Zod v4** em todas as Server Actions.
-    - Saneamento de rede anti-SSRF com **`ipaddr.js`** e DNS pinning via **`undici`** para validação de requisições de notícias.
-12. **Padrão e Governança de Código**: TypeScript em modo estrito, ESLint 9, Prettier com ordenação automática de classes Tailwind, Git Hooks com Husky e lint-staged, Conventional Commits (Commitlint) e logs estruturados em JSON com **Pino**.
-13. **Frontend em Feature-Sliced Design (FSD)**: O padrão é aplicado aos fluxos de lobby, partida e desafio: `views/` compõe páginas (equivalente FSD a `pages/` no App Router), `features/` e `widgets/` expõem APIs públicas, e `model/` abriga ViewModels. `components/` segue Atomic Design para elementos reutilizáveis.
-14. **Pirâmide de Testes Completa**: Mais de 30 suítes cobrindo testes unitários, testes de integração de infraestrutura, testes de componentes React e testes End-to-End com Playwright.
+## Resultados do modelo
 
----
+Números do relatório [`machine-learning/supervised-learning/RESULTADOS.md`](machine-learning/supervised-learning/RESULTADOS.md) (corpus Fake.br):
 
-## 🧪 3. Estratégia e Pirâmide de Testes
+| Medida | Valor |
+|---|---|
+| F1 macro em validação cruzada (5 folds) | 0,9295 ± 0,0081 |
+| F1 macro no teste interno (sem calibração) | 0,9243 |
+| AUC no teste interno (sem calibração) | 0,9789 |
+| F1 macro externo, títulos do FakeRecogna (exploratório) | 0,6378 |
+| AUC externo, títulos do FakeRecogna (exploratório) | 0,6774 |
 
-O projeto adota uma esteira completa de garantia de qualidade automatizada:
+O desempenho cai bastante no teste externo, em títulos de outra fonte. Por isso o modelo é apresentado como apoio à análise, não como prova de veracidade.
 
-| Categoria de Teste              | Escopo / Alvo                                           | Ferramental                            | Comando              |
-| :------------------------------ | :------------------------------------------------------ | :------------------------------------- | :------------------- |
-| **Unitários de Domínio**        | Entidades puras, regras de negócio e Use Cases          | Vitest v4                              | `pnpm test:unit`     |
-| **Integração de Banco e Cache** | Repositórios Drizzle, comandos Redis e streams SSE      | Vitest v4                              | `pnpm test:unit`     |
-| **Componentes de UI**           | Renderização, acessibilidade e interações de tela       | React Testing Library + JSDOM          | `pnpm test:unit`     |
-| **End-to-End (E2E)**            | Fluxos completos de usuário em navegadores reais        | Playwright (Chromium, Firefox, WebKit) | `pnpm test:e2e`      |
-| **Heurísticas de Extração**     | Extração de notícias da web aberta e bloqueio anti-SSRF | TSX Test Runner (`tsx --test`)         | `pnpm test:legacy`   |
-| **Cobertura de Código**         | Aferição de cobertura de linhas e branches              | Vitest Coverage (V8)                   | `pnpm test:coverage` |
+Pontos de IA no código:
 
----
+- **Machine learning clássico supervisionado:** atributos linguísticos extraídos com spaCy (`pt_core_news_sm`), seleção de atributos por chi², redução de dimensionalidade (SVD) e SVM calibrado. Política de decisão com limiares 0,35 e 0,65 e mínimo de 30 palavras.
+- **Análise não supervisionada:** padrões FP-Growth sobre atributos do texto, usados em comparações descritivas.
+- **LLM, tool calling, voz e MCP:** não encontrei chamadas a LLM, nem uso de tool calling, voz ou MCP no código do `web-app` e do `model-engine`.
 
-## 🗂️ 4. Estrutura de Diretórios do Projeto
+## Stack
 
-```text
-olimpo-fake-news-ai/
-├── docs/
-│   ├── codigo/                            # Arquitetura, acessibilidade e decisões técnicas
-│   ├── machine-learning/                  # Protocolos, modelos e entregáveis de ML
-│   └── openspec/                         # Governança OpenSpec (Spec-Driven Development)
-│       ├── specs/                        # Capacidades canônicas (auth, rooms, news-voting, sse, etc.)
-│       └── changes/                      # Histórico e propostas ativas de mudanças
-├── machine-learning/                      # Experimentos e pipelines de dados com scikit-learn
-│   ├── supervised-learning/               # Classificação supervisionada e modelos de baseline
-│   └── unsupervised-learning/             # Detecção de anomalias (K-Means, DBSCAN, Isolation Forest)
-├── model-engine/                          # Execução dos modelos consumida pelo aplicativo
-│   ├── service.py                         # Serviço HTTP interno
-│   ├── models/unsupervised/               # FP-Growth, extração e catálogo congelados
-│   └── tools/                            # Exportação offline dos artefatos de pesquisa
-└── web-app/                               # Aplicação Full-Stack Next.js 16
-    ├── drizzle/                           # Migrações SQL versionadas
-    ├── tests/                             # Suítes de testes globais, componentes e E2E Playwright
-    └── src/
-        ├── app/                           # App Router (Páginas, Layouts e Route Handlers SSE)
-        │   └── api/                       # Feature-First Backend Modules
-        │       ├── auth/                  # Entidades, usecases, actions e testes de autenticação
-        │       ├── rooms/                 # Gestão de salas, PIN e playlist de notícias
-        │       ├── news-voting/           # Votação em 3 tiers e apuração de rodadas
-        │       ├── realtime-events/       # SSE streaming e publishers Redis
-        │       └── ai-feedback/           # Análise e feedback explicativo pedagógico
-        ├── components/                    # Primitivas de UI agnósticas (FSD Layer: components/ui)
-        ├── entities/                      # Entidades conceituais visuais do frontend
-        ├── features/                      # Fatias de funcionalidades interativas (ex.: extract-news)
-        ├── widgets/                       # Blocos compostos de tela (ex.: app-header, game-hud)
-        ├── views/                         # Telas completas montadas (home, olimpo, sandbox)
-        └── server/shared/                 # Infraestrutura singleton compartilhada
-            ├── database/                  # Cliente Drizzle e Schemas PostgreSQL
-            ├── redis/                     # Cliente singleton ioredis
-            └── logger/                    # Logger estruturado em JSON com Pino
-```
+- Web: Next.js 16, React 19, TypeScript, Drizzle ORM, PostgreSQL, Redis e SSE
+- ML: Python, scikit-learn, spaCy, joblib, notebooks Jupyter
+- Qualidade: Vitest, Playwright e documentação com OpenSpec
+- Site de documentação (`docu-app`) em Next.js
 
----
+## Meu papel
 
-## 🚀 5. Como Executar Localmente
+Fiquei com a frente de **aprendizado supervisionado**:
 
-O serviço de análise dos modelos está separado em [`model-engine/`](model-engine/README.md).
-Ele aplica os padrões do FP-Growth e apresenta comparações descritivas do corpus sem importar os scripts de
-experimento de `machine-learning/`. O classificador supervisionado também está integrado nessa camada,
-com previsão exibida após o encerramento coletivo da rodada.
+- preparação de dados e treino de regressão logística e SVM nos notebooks de `machine-learning/supervised-learning`;
+- experimentos de redução de dimensionalidade e os achados registrados;
+- SVM com metadados do spaCy e exportação do modelo;
+- o entregável final (relatório e artigo) e suas figuras, além de contribuições pontuais na documentação.
 
-### Pré-requisitos
+O `web-app` e o `model-engine` foram desenvolvidos por outras pessoas do time. Esta é a minha cópia (fork) do repositório da equipe.
 
-- **Node.js**: Versão `24.x` ou superior (compatível com `22.22+`).
-- **Gerenciador de Pacotes**: `pnpm` (versão 11+ recomendada) ou `npm`.
-- **Serviços de Dados**: PostgreSQL e Redis em execução local (ou via serviço gerenciado).
+## Contexto
 
-### Passos de Instalação
+Projeto da **Residência em IA, Formação avançada em Inteligência Artificial** ([página do programa](https://formacao.eldorado.org.br/residencia-ia-pucc)), em parceria entre a PUC-Campinas (PUCC) e o Instituto de Pesquisas Eldorado.
+
+## Como rodar localmente
+
+Requisitos: Node.js 22.22 ou superior (24.x recomendado), pnpm, PostgreSQL e Redis.
 
 ```bash
-# 1. Clonar o repositório
-git clone https://github.com/LucasSilvaC/olimpo-fake-news-ai.git
-cd olimpo-fake-news-ai/web-app
-
-# 2. Instalar as dependências do projeto
+git clone https://github.com/Jp-mainieri/residenciaia-1-fakenews.git
+cd residenciaia-1-fakenews/web-app
 pnpm install
-
-# 3. Configurar as variáveis de ambiente
 cp .env.example .env.local
-
-# 4. Executar as migrações do banco de dados relacional
 pnpm db:migrate
-
-# 5. Iniciar o servidor de desenvolvimento (escuta em 127.0.0.1:3000)
-pnpm dev
+pnpm dev          # http://127.0.0.1:3000
 ```
 
-Acesse a aplicação em seu navegador em **<http://127.0.0.1:3000>**.
+Para reproduzir os experimentos de ML, use os notebooks e os requisitos em `machine-learning/` (`requirements.txt`). O serviço de modelos está descrito em [`model-engine/README.md`](model-engine/README.md).
 
-### Principais Scripts e Comandos
-
-```bash
-# Executar testes unitários e de integração com Vitest
-pnpm test:unit
-
-# Executar testes em modo watch interativo
-pnpm test:watch
-
-# Gerar relatório de cobertura de código
-pnpm test:coverage
-
-# Executar testes ponta a ponta com Playwright
-pnpm test:e2e
-
-# Executar Playwright com interface visual interativa
-pnpm test:e2e:ui
-
-# Verificação estática de tipos TypeScript
-pnpm typecheck
-
-# Análise estática de código com ESLint
-pnpm lint
-
-# Formatação automática de código com Prettier
-pnpm format
-```
-
----
-
-## 📄 6. Documentação Detalhada
-
-Para uma imersão técnica exaustiva em cada decisão de arquitetura, consulte:
-
-- **[Índice da documentação (machine learning e código)](docs/README.md)**
-- **[Documentação de machine learning](docs/machine-learning/README.md)**
-- **[Documentação de código e software](docs/codigo/README.md)**
-- **[Documento de Arquitetura de Software (PDF)](docs/codigo/arquitetura.pdf)**
-- **[Código-Fonte LaTeX da Arquitetura](docs/codigo/arquitetura.tex)**
-- **[Especificações de Domínio OpenSpec](docs/openspec/specs/)**
-
----
-
-## 🤝 7. Parcerias e Créditos
-
-O projeto **Olimpo** é fruto da colaboração técnico-científica entre:
-
-- **PUCC**: Pontifícia Universidade Católica de Campinas
-- **Instituto de Pesquisas Eldorado**: Referência em pesquisa, desenvolvimento e inovação tecnológica no Brasil
-
----
-
-<div align="center">
-  <sub>Construído com rigor de engenharia pela Equipe Olimpo AI. 🏛️✨</sub>
-</div>
+O README original da equipe, com as decisões de arquitetura e a estratégia de testes, está em [`docs/olimpo-readme-original.md`](docs/olimpo-readme-original.md).
